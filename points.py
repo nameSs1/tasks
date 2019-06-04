@@ -1,20 +1,59 @@
-import re
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
 
+# def read_file():  # читает points.txt и возвращает список точек, используются регулярные выражения
+#     template = re.compile(r"\-?\d+", re.M)
+#     with open("points.txt", "r") as txt_file:
+#         points = txt_file.read()
+#     string_from_file = template.findall(points)
+#     if len(string_from_file) % 2 != 0:
+#         string_from_file.pop()
+#     points = []
+#     while len(points) * 2 != len(string_from_file):
+#         point = (int(string_from_file[len(points) * 2]), int(string_from_file[len(points) * 2 + 1]))
+#         points.append(point)
+#     return points
+
+
 def read_file():  # читает points.txt и возвращает список точек
-    template = re.compile(r"\-?\d+", re.M)
+
+    def type_namber(namber):  # определяет тип числа
+        if namber[-1] == '.':
+            namber = (int(namber[:-1]))
+        elif '.' not in namber:
+            namber = (int(namber))
+        else:
+            namber = (float(namber))
+        return namber
+
     with open("points.txt", "r") as txt_file:
-        points = txt_file.read()
-    string_from_file = template.findall(points)
-    if len(string_from_file) % 2 != 0:
-        string_from_file.pop()
+        file = txt_file.read()
+    nambers_list = []
+    namber = ''
+    file += ' '
+    for i in range(len(file)):
+        symbol = file[i]
+        if symbol == '-' and len(namber) == 0:
+            namber += symbol
+        elif symbol in ('1234567890'):
+            namber += symbol
+        elif symbol in (',.') and (len(namber) > 1 or len(namber) == 1 and namber != '-') and '.' not in namber:
+            namber += '.'
+        else:
+            if len(namber) > 0 and namber != '-':
+                nambers_list.append(type_namber(namber))
+                namber = ''
+    if len(nambers_list) % 2 != 0:
+        nambers_list.pop()
     points = []
-    while len(points) * 2 != len(string_from_file):
-        point = (int(string_from_file[len(points) * 2]), int(string_from_file[len(points) * 2 + 1]))
+    while len(points) * 2 != len(nambers_list):
+        point = ((nambers_list[len(points) * 2]), (nambers_list[len(points) * 2 + 1]))
         points.append(point)
     return points
+
+
+
 
 
 def calculation_polygon(points):  # строит выпуклый многоугольник по точкам на координатах
